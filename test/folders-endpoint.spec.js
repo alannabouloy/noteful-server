@@ -104,7 +104,47 @@ describe(`/api/folders endpoints work`, () => {
 
         })
         it(`returns a 400 bad request when given invalid data`, () => {
-
+            return supertest(app)
+                .post('/api/folders')
+                .send({})
+                .expect(400, {
+                    error: { message: `must have 'folder_name' in request body`}
+                })
         })
     })
+
+    describe(`DELETE /api/folders/:folder_id`, () => {
+        context(`Given there are folders in the database`, () => {
+            const testFolders = makeFoldersArray()
+
+            beforeEach('insert folders', () => {
+                return db
+                    .into('noteful_folders')
+                    .insert(testFolders)
+            })
+
+            it(`returns a 204 and deletes folder`, () => {
+                const folderToDelete = 2
+                const expectedArray = testFolders.filter(folder => folder.id !== folderToDelete)
+
+                return supertest(app)
+                    .delete(`/api/folders/${folderToDelete}`)
+                    .expect(204)
+                    .then(res => {
+                        return supertest(app)
+                            .get('/api/folders')
+                            .expect(200, expectedArray)
+                    })
+            })
+        })
+        context(`Given there are no folders`, () => {
+            it(`returns a 404 and error message`, () => {
+                const folderToDelete = 12345
+                return supertest(app)
+                    .delete(`/api/folders/${folderToDelete}`)
+                    .expect(404, {error: {message: 'Folder Not Found'}})
+            })
+        })
+    })
+
 })

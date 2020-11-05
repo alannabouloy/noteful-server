@@ -62,8 +62,16 @@ foldersRouter
             .catch(next)
     })
     .get((req, res, next) => {
-        console.log("this is the GET", res.folder)
         res.json(serializeFolder(res.folder))
+    })
+    .delete((req, res, next) => {
+        const knexInstance = req.app.get('db')
+        FoldersService.deleteFolder(knexInstance, res.folder.id)
+            .then(
+                res
+                    .status(204)
+                    .end()
+            )
     })
 
 module.exports = foldersRouter
