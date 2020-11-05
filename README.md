@@ -1,17 +1,27 @@
-# Express Boilerplate!
+# Noteful Server!
 
-This is a boilerplate project used for starting new projects!
+This is the server and database for the noteful project in the Thinkful Software Engineering Immersion Program.
 
-## Set up
+The object of the Noteful App is an interface that allows users to add folders and notes, with each note being assigned to a specific folder. User should be able to access notes and folders through the React client application. 
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+## Documentation
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+This server has four endpoints:
+
+1. `/api/folders` will allow two actions: GET and POST where the user can access all folders stored in the database and add new folders as needed. A GET call to this endpoint should return an array of json objects formatted with the below values:
+    - id (unique primary key)
+    - name (unique string)
+
+2. `/api/notes` will allow two actions: GET and POST where the user can access all notes stored in the database and add new notes as needed. A GET call to this endpoint should return an arrayof json objects formatted with the below values: 
+    - id (unique primary key)
+    - name (unique string)
+    - modified (date object)
+    - folder_id (reference to the id to corresponding folder)
+    - content (string)
+
+3. `/api/folders/:folder_id` will allow three actions: GET, DELETE, and PATCH. The user should be able to access a specific folder with the matching folder_id. A GET call to this endpoint will return a single json object formatted with the values listed above from the `/api/folders` endpoint. A PATCH call will only allow the user to change the name value of the folder, and not the id. DELETE will delete the folder and any notes stored within that folder. 
+
+4. `/api/notes/:notes_id` will allow three actions: GET, DELETE, and PATCH. The user should be able to access a specific note with the matching note_id. A GET call to this endpoint will return a single json object formatted with the values listed above from the `/api/notes` endpoint. A PATCH call will allow the user to alter the name, folder, and content of the note, and it will also automatically update the date stored in the modified key. 
 
 ## Scripts
 
@@ -20,6 +30,8 @@ Start the application `npm start`
 Start nodemon for the application `npm run dev`
 
 Run the tests `npm test`
+
+Make changes to the database `npm run migrate [migration-version]`
 
 ## Deploying
 
