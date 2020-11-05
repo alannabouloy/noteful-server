@@ -49,7 +49,7 @@ describe(`/api/folders endpoints work`, () => {
         })
     })
 
-    describe.only(`GET /api/folders/:folder_id`, () => {
+    describe(`GET /api/folders/:folder_id`, () => {
         context(`there are folders in the database`, () => {
             const testFolders = makeFoldersArray()
 
@@ -94,10 +94,11 @@ describe(`/api/folders endpoints work`, () => {
                 .expect(res => {
                     expect(res.body.folder_name).to.eql(newFolder.folder_name)
                     expect(res.body).to.have.property('id')
+                    return res
                 })
                 .then(postRes => {
                     return supertest(app)
-                        .get(`/articles/${postRes.body.id}`)
+                        .get(`/api/folders/${postRes.body.id}`)
                         .expect(postRes.body)
                 })
 
