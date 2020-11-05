@@ -72,6 +72,29 @@ foldersRouter
                     .status(204)
                     .end()
             )
+            .catch(next)
+    })
+    .patch(jsonParser, (req, res, next) => {
+        const knexInstance = req.app.get('db')
+        const { folder_name } = req.body
+        const folderToUpdate = { folder_name }
+
+        const numberOfValues = Object.values(folderToUpdate).filter(Boolean).length
+        if(numberOfValues === 0) {
+            return res.status(400).json({
+                error: {
+                    message: `must provide a new 'folder_name' in request body`
+                }
+            })
+        }
+
+        FoldersService.updateFolder(knexInstance, res.folder.id, folderToUpdate)
+            .then(
+                res
+                    .status(204)
+                    .end()
+            )
+            .catch(next)
     })
 
 module.exports = foldersRouter

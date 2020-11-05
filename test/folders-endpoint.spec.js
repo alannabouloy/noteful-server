@@ -2,6 +2,7 @@ const { expect } = require('chai')
 const knex = require('knex')
 const supertest = require('supertest')
 const app = require('../src/app')
+const foldersRouter = require('../src/folders/folders-router')
 const { makeFoldersArray } = require('./folders.fixtures')
 
 describe(`/api/folders endpoints work`, () => {
@@ -82,7 +83,7 @@ describe(`/api/folders endpoints work`, () => {
         })
     })
    
-    describe(`POST /api/folders endpoint works`, () => {
+    describe(`POST /api/folders`, () => {
         it(`returns a 201 and correct information when request valid`, () => {
             const newFolder = {
                 folder_name: 'Test Folder added'
@@ -147,4 +148,57 @@ describe(`/api/folders endpoints work`, () => {
         })
     })
 
+    describe(`PATCH /api/folders/folder_id`, () => {
+        context(`Given folders in database`, () => {
+            const testFolders = makeFoldersArray()
+            
+            beforeEach(`insert folders`, () => {
+                return db 
+                    .into('noteful_folders')
+                    .insert(testFolders)
+            })
+
+            it(`returns a 204 and updates the folder`, () => {
+                const folderToUpdate = 2
+                const updateFolder = {
+                    folder_name: 'Updated Folder'
+                }
+                const expectedFolder = {
+                    ...testFolders[folderToUpdate - 1],
+                    ...updateFolder
+                }
+                
+                return supertest(app)
+                    .patch(`/api/folders/${folderToUpdate}`)
+                    .send(updateFolder)
+                    .expect(204)
+                    .then(res => {
+                        return supertest(app)
+                            .get(`/api/folders/${folderToUpdate}`)
+                            .expect(200, expectedFolder)
+                    })
+            })
+            
+            it(`returns a 400 if no valid field is given`, () => {
+                const folderToUpdate = 2
+                const updateFolder = {
+                    invalidField: 'testing'
+                }
+
+                return supertest(app)
+                    .patch(`/api/folders/${folderToUpdate}`)
+                    .send(updateFolder)
+                    .expect(400, {error: { message: `must provide a new 'folder_name' in request body`}})
+            })
+        })
+        context(`Given no folders`, () => {
+            it(`returns a 404 and error message`, () => {
+                const folderToUpdate = 12345
+                return supertest(app)
+                    .patch(`/api/folders/${folderToUpdate}`)
+                    .send({ })
+                    .expect(404, { error: { message: `Folder Not Found`}})
+            })
+        })
+    })
 })
