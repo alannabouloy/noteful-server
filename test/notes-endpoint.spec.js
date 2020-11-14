@@ -57,7 +57,7 @@ describe(`/api/notes endpoints work`, () => {
         })
     })
 
-    describe.only(`POST /api/notes endpoint works`, () => {
+    describe(`POST /api/notes endpoint works`, () => {
         const testFolders = makeFoldersArray()
 
         beforeEach(`insert folders`, () => {
