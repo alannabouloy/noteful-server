@@ -172,7 +172,7 @@ describe(`/api/folders endpoints work`, () => {
                     .patch(`/api/folders/${folderToUpdate}`)
                     .send(updateFolder)
                     .expect(204)
-                    .then(res => {
+                    .then(() => {
                         return supertest(app)
                             .get(`/api/folders/${folderToUpdate}`)
                             .expect(200, expectedFolder)

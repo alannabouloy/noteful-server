@@ -57,48 +57,6 @@ describe(`/api/notes endpoints work`, () => {
         })
     })
 
-    describe(`POST /api/notes endpoint works`, () => {
-        const testFolders = makeFoldersArray()
-
-        beforeEach(`insert folders`, () => {
-            return db
-                .into('noteful_folders')
-                .insert(testFolders)
-                .then(() => {
-                    return supertest(app)
-                        .get(`/api/folders`)
-                        .then(res => {
-                            console.log(res.body)
-                        })
-                })
-        })
-
-        it(`Returns 201 and new note`, () => {
-            const newNote = {
-                note_name: 'Test note',
-                folder_id: 2,
-                content: 'Test if it works'
-            }
-
-            supertest(app)
-                .post('/api/notes')
-                .send(newNote)
-                .expect(201)
-                .expect(res => {
-                    expect(res.body.note_name).to.eql(newNote.note_name)
-                    expect(res.body.folder_id).to.eql(newNote.folder_id)
-                    expect(res.body.content).to.eql(newNote.content)
-                    expect(res.body).to.have.property('id')
-                    expect(res.body).to.have.property('modified')
-                })
-                .then(postRes => {
-                    return supertest(app)
-                        .get(`api/notes/${postRes.body.id}`)
-                        .expect(postRes.body)
-                })
-        })
-    })
-
     describe(`GET /api/notes/:note_id endpoint works`, () => {
         context(`Given notes in the database`, () => {
             const testFolders = makeFoldersArray()
