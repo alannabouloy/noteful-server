@@ -72,5 +72,41 @@ notesRouter
             })
             .catch(next)
     })
+    .patch(jsonParser, (req, res, next) => {
+        const knexInstance = req.app.get('db')
+        const { note_name, content } = req.body
+        const noteToUpdate = {note_name, content}
+        
+        const numberOfValues = Object.values(noteToUpdate).filter(Boolean).length
+        if(numberOfValues === 0) {
+            return res.status(400).json({
+                error: {
+                    message: `must provide a new 'note_name' or 'content' in request body`
+                }
+            })
+        }
+
+        if(note_name){
+            if(note_name.length < 3){
+                return res
+                    .status(400)
+                    .json({error: {message: 'note_name must be 3 or more characters'}})
+            }
+        }
+        if(content){
+            if(content > 1000){
+                return res
+                .status(400)
+                .json({error: {message: 'content cannot exceed 1000 characters'}})
+            }
+        }
+        NotesService.updateNote(knexInstance, res.note.id, noteToUpdate)
+            .then(() => {
+                res
+                    .status(204)
+                    .end()
+            })
+            .catch(next)
+    })
 
     module.exports = notesRouter
