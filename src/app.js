@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
 const foldersRouter = require('./folders/folders-router')
 const notesRouter = require('./notes/notes-router')
-
+const { validateBearerToken } = require('./middleware/token-auth')
 const app = express();
 
 const morganOption = (NODE_ENV === 'production')
@@ -16,6 +16,8 @@ const morganOption = (NODE_ENV === 'production')
 app.use(morgan(morganOption));
 app.use(helmet());
 app.use(cors());
+
+app.use(validateBearerToken)
 
 app.use('/api/folders', foldersRouter)
 app.use('/api/notes', notesRouter)
