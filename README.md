@@ -10,11 +10,11 @@ This server has four endpoints:
 
 1. `/api/folders` will allow two actions: GET and POST where the user can access all folders stored in the database and add new folders as needed. A GET call to this endpoint should return an array of json objects formatted with the below values:
     - id (unique primary key)
-    - name (unique string)
+    - folder_name (unique string)
 
 2. `/api/notes` will allow two actions: GET and POST where the user can access all notes stored in the database and add new notes as needed. A GET call to this endpoint should return an arrayof json objects formatted with the below values: 
     - id (unique primary key)
-    - name (unique string)
+    - note_name (unique string)
     - modified (date object)
     - folder_id (reference to the id to corresponding folder)
     - content (string)
